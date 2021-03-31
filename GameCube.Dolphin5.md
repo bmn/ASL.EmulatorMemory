@@ -44,14 +44,14 @@ update {
       // Set up watchers
       vars.Watchers = new MemoryWatcherList() {
         // The game ID is used later to check the base address is still valid
-        new StringWatcher(D.BaseAddress) { Name = "GameId" },
+        new StringWatcher(D.BaseAddress, 6) { Name = "GameId" },
         
         // A simple address using D.BaseAddress as the base
         new MemoryWatcher<byte>((IntPtr)(D.BaseAddress + 0x123456)) { Name = "ByteValue" },
         
         // A deep pointer for addresses using multiple offsets
         new StringWatcher(
-          new DeepPointer(D.BaseAddress, new Int32[] { 0x789ABC, 0xDEF012 })
+          new DeepPointer(D.BaseAddress, new Int32[] { 0x789ABC, 0xDEF012 }), 123
         ) { Name = "StringValue" };
       };
       
