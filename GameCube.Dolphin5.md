@@ -44,15 +44,15 @@ update {
       
       // Memory has been found
       vars.BaseAddress = page.BaseAddress;
-      print("Game memory found at address" + vars.BaseAddress.ToString("X"));
+      print("Game memory found at address " + vars.BaseAddress.ToString("X"));
       
       // Set up watchers
       vars.Watchers = new MemoryWatcherList() {
         // The game ID is used later to check the base address is still valid
         new StringWatcher(vars.BaseAddress, 6) { Name = "GameId", FailAction = MemoryWatcher.ReadFailAction.SetZeroOrNull },
         
-        new MemoryWatcher<byte>((IntPtr)(vars.BaseAddress + 0x123456)) { Name = "ByteValue" },
-        new StringWatcher((IntPtr)(vars.BaseAddress + 0x5a348c), 7) { Name = "StringValue" }
+        new MemoryWatcher<byte>(IntPtr.Add(vars.BaseAddress, 0x123456)) { Name = "ByteValue" },
+        new StringWatcher(IntPtr.Add(vars.BaseAddress, 0x5a348c), 7) { Name = "StringValue" }
       };
       
       break;
