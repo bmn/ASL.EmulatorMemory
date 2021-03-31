@@ -2,7 +2,7 @@
 
 ## Pattern
 * ePSXe 2.0.5 game memory starts at `ePSXe.exe+A82020`
-* If targeting ePSXe specifically, you can a state descriptor for simplicity
+* If targeting ePSXe specifically, you can use a state descriptor for simplicity
 * If targeting multiple emulators, use this as the base for your watcher definitions
 
 ## Example (state descriptor)
