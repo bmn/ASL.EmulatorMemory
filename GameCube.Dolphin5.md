@@ -16,7 +16,6 @@ state("Dolphin") {
 
 // Set up default values
 startup {
-  vars.GameId = "ABCDE1";
   vars.BaseAddress = IntPtr.Zero;
   vars.Watchers = new MemoryWatcherList();
 }
@@ -26,6 +25,8 @@ update {
   
   // If no existing found memory, attempt to find memory
   if (vars.BaseAddress == IntPtr.Zero) {
+    string targetGameId = "ABCDE1";
+  
     // Iterate through all memory regions
     foreach (Memory page in game.MemoryPages(true))
     {
@@ -35,8 +36,8 @@ update {
       }
 
       // Check game ID matches
-      string gameId = memory.ReadString((IntPtr)page.BaseAddress, 6);
-      if (!gameId.Equals(vars.GameId)) {
+      string foundGameId = memory.ReadString((IntPtr)page.BaseAddress, 6);
+      if (!foundGameId.Equals(targetGameId)) {
         continue;
       }
       vars.BaseAddress = page.BaseAddress;
@@ -44,7 +45,7 @@ update {
       // Set up watchers
       vars.Watchers = new MemoryWatcherList() {
         // The game ID is used later to check the base address is still valid
-        new StringWatcher(D.BaseAddress, 6) { Name = "GameId" },
+        new StringWatcher(D.BaseAddress, 6) { Name = "GameId", FailAction = ReadFailAction.SetZeroOrNull },
         
         // A simple address using D.BaseAddress as the base
         new MemoryWatcher<byte>((IntPtr)(D.BaseAddress + 0x123456)) { Name = "ByteValue" },
@@ -65,14 +66,14 @@ update {
   vars.Watchers.UpdateAll();
   
   // Check that the base address is still valid and pointing at the same game
-  if (!vars.Watchers.GameId.Equals(vars.GameId)) {
+  if (vars.Watchers.GameId.Changed) {
     vars.BaseAddress = IntPtr.Zero;
     vars.Watchers = new MemoryWatcherList();
     return false;
   }
   
   // Add game-specific autosplitter logic here
-  if (vars.Watchers["ByteValue"] == 1) {
+  if (vars.Watchers["ByteValue"].Current == 1) {
     // ...
   }
   
@@ -81,13 +82,13 @@ update {
 
 
 start {
-   return (vars.Watchers["ByteValue"] == 1);
+   return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Old == 0));
 }
 
 split {
-   return (vars.Watchers["ByteValue"] == 1);
+   return (vars.Watchers["StringValue"].Changed);
 }
 
 reset {
-   return (vars.Watchers["ByteValue"] == 1);
+   return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Current == 0))
 }
