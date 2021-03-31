@@ -72,15 +72,15 @@ update {
     return false;
   }
   
-  // Add game-specific autosplitter logic here
+  // Add game-specific autosplitter logic here, e.g.
   if (vars.Watchers["ByteValue"].Current == 1) {
-    // ...
   }
   
   return true;
 }
 
 
+// Example action blocks...
 start {
   return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Old == 0));
 }
