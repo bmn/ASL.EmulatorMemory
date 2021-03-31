@@ -1,10 +1,10 @@
-# Dolphin 5 for GameCube
+# Dolphin 5 for GameCube/Wii
 
 ## Pattern
 * In `state`, attach to Dolphin
 * In `update`, validate any existing found memory. If not found:
   - Iterate through Dolphin's mapped regions of memory:
-    + for a region of size 32MB (GC standard memory size)
+    + for a region of size 32MB
     + beginning with the desired game ID
   - Set up watchers when memory is found
 
