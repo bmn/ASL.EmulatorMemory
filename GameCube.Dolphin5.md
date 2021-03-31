@@ -25,10 +25,11 @@ update {
   
   // If no existing found memory, attempt to find memory
   if (vars.BaseAddress == IntPtr.Zero) {
-    string targetGameId = "ABCDE1";
+    // What game ID are we looking for (this is Metal Gear Solid The Twin Snakes)
+    string targetGameId = "GGSEA4";
   
     // Iterate through all memory regions
-    foreach (Memory page in game.MemoryPages(true))
+    foreach (var page in game.MemoryPages(true))
     {
       // Check for mapped region size 32MB
       if ((page.RegionSize != (UIntPtr)0x2000000) || (page.Type != MemPageType.MEM_MAPPED)) {
@@ -40,20 +41,18 @@ update {
       if (!foundGameId.Equals(targetGameId)) {
         continue;
       }
+      
+      // Memory has been found
       vars.BaseAddress = page.BaseAddress;
+      print("Game memory found at address" + vars.BaseAddress.ToString("X"));
       
       // Set up watchers
       vars.Watchers = new MemoryWatcherList() {
         // The game ID is used later to check the base address is still valid
-        new StringWatcher(D.BaseAddress, 6) { Name = "GameId", FailAction = ReadFailAction.SetZeroOrNull },
+        new StringWatcher(vars.BaseAddress, 6) { Name = "GameId", FailAction = MemoryWatcher.ReadFailAction.SetZeroOrNull },
         
-        // A simple address using D.BaseAddress as the base
-        new MemoryWatcher<byte>((IntPtr)(D.BaseAddress + 0x123456)) { Name = "ByteValue" },
-        
-        // A deep pointer for addresses using multiple offsets
-        new StringWatcher(
-          new DeepPointer(D.BaseAddress, new Int32[] { 0x789ABC, 0xDEF012 }), 123
-        ) { Name = "StringValue" };
+        new MemoryWatcher<byte>((IntPtr)(vars.BaseAddress + 0x123456)) { Name = "ByteValue" },
+        new StringWatcher((IntPtr)(vars.BaseAddress + 0x5a348c), 7) { Name = "StringValue" }
       };
       
       break;
@@ -63,12 +62,13 @@ update {
   }
   
   // Update all values
-  vars.Watchers.UpdateAll();
+  vars.Watchers.UpdateAll(game);
   
   // Check that the base address is still valid and pointing at the same game
-  if (vars.Watchers.GameId.Changed) {
+  if (vars.Watchers["GameId"].Changed) {
     vars.BaseAddress = IntPtr.Zero;
     vars.Watchers = new MemoryWatcherList();
+    print("Game memory location lost");
     return false;
   }
   
@@ -82,13 +82,13 @@ update {
 
 
 start {
-   return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Old == 0));
+  return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Old == 0));
 }
 
 split {
-   return (vars.Watchers["StringValue"].Changed);
+  return (vars.Watchers["StringValue"].Changed);
 }
 
 reset {
-   return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Current == 0))
+  return ((vars.Watchers["ByteValue"].Changed) && (vars.Watchers["ByteValue"].Current == 0));
 }
