@@ -6,7 +6,7 @@
   * Signature scan for an intruction containing a pointer to MainRAM
   * Read the pointer from the instruction and use it as base
 
-## Example (watchers)
+## Example
 ```c#
 state("mednafen") {
 }
