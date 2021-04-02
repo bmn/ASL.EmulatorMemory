@@ -23,7 +23,7 @@ init {
     
   var signatureTarget = new SigScanTarget(emu.SignatureOffset, emu.Signature);
   var signatureScanner = new SignatureScanner(game, emu.Module.BaseAddress, (int)emu.Module.ModuleMemorySize);
-  IntPtr codeOffset = sigScanner.Scan(sigTarget);
+  IntPtr codeOffset = signatureScanner.Scan(signatureTarget);
   
   if (codeOffset != IntPtr.Zero) {
     vars.BaseAddress = (IntPtr)memory.ReadValue<int>(codeOffset);
