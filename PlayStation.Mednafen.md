@@ -40,7 +40,11 @@ init {
   }
 }
 
-// Example split block
+// Example blocks
+update {
+  vars.Watchers.UpdateAll();
+}
+
 split {
   return (vars.Watchers["StringValue"].Changed);
 }
