@@ -1,5 +1,7 @@
 # ePSXe for PlayStation
 
+As ePSXe has not had a release in 5 years, it should be safe to use its hardcoded MainRAM location.
+
 ## Pattern
 * ePSXe 2.0.5 game memory starts at `ePSXe.exe+A82020`
 * If targeting ePSXe specifically, you can use a state descriptor for simplicity
