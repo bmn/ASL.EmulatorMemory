@@ -22,7 +22,7 @@ init {
   var signature = "48 c7 44 24 ?? ?? ?? ?? ?? 48 c7 44 24 ?? ?? ?? ?? ?? c7 44 24 ?? 00 00 20 00";
     
   var signatureTarget = new SigScanTarget(emu.SignatureOffset, emu.Signature);
-  var signatureScanner = new SignatureScanner(game, emu.Module.BaseAddress, (int)emu.Module.ModuleMemorySize);
+  var signatureScanner = new SignatureScanner(game, module.BaseAddress, (int)module.ModuleMemorySize);
   IntPtr codeOffset = signatureScanner.Scan(signatureTarget);
   
   if (codeOffset != IntPtr.Zero) {
