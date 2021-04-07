@@ -21,7 +21,7 @@ init {
   var module = modules.First();
   var signature = "48 c7 44 24 ?? ?? ?? ?? ?? 48 c7 44 24 ?? ?? ?? ?? ?? c7 44 24 ?? 00 00 20 00";
     
-  var signatureTarget = new SigScanTarget(emu.SignatureOffset, emu.Signature);
+  var signatureTarget = new SigScanTarget(5, signature);
   var signatureScanner = new SignatureScanner(game, module.BaseAddress, (int)module.ModuleMemorySize);
   IntPtr codeOffset = signatureScanner.Scan(signatureTarget);
   
